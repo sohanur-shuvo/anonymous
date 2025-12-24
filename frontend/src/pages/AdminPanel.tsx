@@ -205,7 +205,7 @@ export default function AdminPanel() {
                                             <div className="admin-message-text">
                                                 <strong>{message.user_id === 'Admin' ? 'You (Admin)' : message.user_name || 'Anonymous'}:</strong> {message.content}
                                             </div>
-                                            <div className="admin-message-time">{message.timestamp}</div>
+                                            <div className="admin-message-time">{message.display_time || message.timestamp}</div>
                                         </div>
                                     </div>
                                 ))}

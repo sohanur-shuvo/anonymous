@@ -8,6 +8,7 @@ interface Message {
     role: string;
     content: string;
     timestamp: string;
+    display_time?: string;
     message_id: string;
     user_id: string;
     user_name?: string;
@@ -109,7 +110,7 @@ export default function Chat() {
                                                     : (isOwnMessage(message) ? 'You' : 'Anonymous')}:
                                             </strong> {message.content}
                                         </div>
-                                        <div className="message-time">{message.timestamp}</div>
+                                        <div className={user?.is_admin ? "admin-message-time" : "message-time"}>{message.display_time || message.timestamp}</div>
                                     </div>
                                 </div>
                             ))}

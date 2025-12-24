@@ -79,6 +79,10 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Pydantic models
+class Message(BaseModel):
+    content: str
+    user_name: Optional[str] = None
+
 class GoogleLogin(BaseModel):
     credential: str
 
@@ -95,9 +99,6 @@ class UserLogin(BaseModel):
 class AdminLogin(BaseModel):
     username: str
     password: str
-
-class Message(BaseModel):
-    content: str
 
 class UserUpdate(BaseModel):
     status: str
@@ -357,18 +358,24 @@ async def get_messages(username: str = Depends(verify_token)):
     if not db: return {"messages": []}
     
     try:
-        # Get last 50 messages
+        # Fetch last 50 messages. 
+        # Note: We fetch without order_by to avoid needing a custom index on Render/Firestore initially.
+        # We will sort them in Python.
         messages_ref = db.collection('messages')
-        query = messages_ref.order_by('timestamp', direction=firestore.Query.DESCENDING).limit(50)
+        docs = messages_ref.limit(100).stream()
         
         messages = []
-        docs = list(query.stream())
-        for doc in reversed(docs):
-            messages.append(doc.to_dict())
-            
-        return {"messages": messages}
+        for doc in docs:
+            msg_data = doc.to_dict()
+            messages.append(msg_data)
+        
+        # Sort by timestamp (ISO format ensures correct sorting)
+        messages.sort(key=lambda x: x.get('timestamp', ''))
+        
+        # Return last 50
+        return {"messages": messages[-50:]}
     except Exception as e:
-        print(f"Error fetching messages: {e}")
+        print(f"🔥 Error fetching messages: {e}")
         return {"messages": []}
 
 @app.post("/api/messages")
@@ -383,7 +390,8 @@ async def send_message(message: Message, username: str = Depends(verify_token)):
     new_message = {
         "role": "user",
         "content": message.content,
-        "timestamp": datetime.now().strftime("%H:%M:%S"),
+        "timestamp": datetime.now().isoformat(), # Use ISO format for robust sorting
+        "display_time": datetime.now().strftime("%H:%M:%S"), # For UI display
         "message_id": str(uuid4()),
         "user_id": username,
         "user_name": user_data.get("name", "Anonymous") if user_data else "Administrator"
