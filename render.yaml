@@ -19,7 +19,7 @@ services:
         value: firebase_credentials.json
 
   # Frontend React (Vite) Service
-  - type: static
+  - type: static_site
     name: anonymous-chat-frontend
     env: node
     buildCommand: npm install && npm run build
