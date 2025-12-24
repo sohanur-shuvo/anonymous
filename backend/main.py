@@ -24,7 +24,7 @@ app = FastAPI(title="Anonymous Chat API")
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=["*"], # In production, you might want to specify the exact frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
