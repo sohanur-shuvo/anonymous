@@ -49,20 +49,30 @@ export default function Login({ defaultMode }: LoginProps = {}) {
     }, []);
 
     useEffect(() => {
-        if (googleClientId && typeof google !== 'undefined' && (mode === 'login' || mode === 'signup')) {
-            try {
-                google.accounts.id.initialize({
-                    client_id: googleClientId,
-                    callback: handleGoogleLogin
-                });
-                google.accounts.id.renderButton(
-                    document.getElementById("googleSignInDiv"),
-                    { theme: "outline", size: "large", width: "250" }
-                );
-            } catch (e) {
-                console.error("Google Auth Error", e);
+        const initGoogle = () => {
+            if (googleClientId && typeof google !== 'undefined' && (mode === 'login' || mode === 'signup')) {
+                try {
+                    google.accounts.id.initialize({
+                        client_id: googleClientId,
+                        callback: handleGoogleLogin
+                    });
+                    const div = document.getElementById("googleSignInDiv");
+                    if (div) {
+                        google.accounts.id.renderButton(
+                            div,
+                            { theme: "outline", size: "large", width: "250" }
+                        );
+                    }
+                } catch (e) {
+                    console.error("Google Auth Error", e);
+                }
             }
-        }
+        };
+
+        initGoogle();
+        // Check again after 1 second if it wasn't ready
+        const timer = setTimeout(initGoogle, 1000);
+        return () => clearTimeout(timer);
     }, [googleClientId, mode]);
 
     const handleSubmit = async (e: React.FormEvent) => {

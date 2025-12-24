@@ -41,6 +41,7 @@ function AppRoutes() {
             />
             <Route path="/index.html" element={<Navigate to="/" replace />} />
             <Route path="/" element={<Navigate to="/chat" replace />} />
+            <Route path="*" element={<Navigate to="/chat" replace />} />
         </Routes>
     );
 }
