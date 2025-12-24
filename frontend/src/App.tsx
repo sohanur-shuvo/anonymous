@@ -29,6 +29,7 @@ function AppRoutes() {
                     isAuthenticated && isAdmin ? <AdminPanel /> : <Login defaultMode="admin" />
                 }
             />
+            <Route path="/index.html" element={<Navigate to="/" replace />} />
             <Route path="/" element={<Navigate to="/chat" replace />} />
         </Routes>
     );
