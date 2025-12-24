@@ -18,12 +18,11 @@ services:
       - key: FIREBASE_CREDENTIALS_PATH
         value: firebase_credentials.json
 
+static_sites:
   # Frontend React (Vite) Service
-  - type: static_site
-    name: anonymous-chat-frontend
-    env: node
+  - name: anonymous-chat-frontend
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     rootDirectory: frontend
     envVars:
       - key: VITE_API_URL
