@@ -16,6 +16,7 @@ interface AuthContextType {
     logout: () => void;
     isAuthenticated: boolean;
     isAdmin: boolean;
+    loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         // Check for stored token on mount
@@ -46,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 localStorage.removeItem('user');
             }
         }
+        setLoading(false);
     }, []);
 
     const login = (newToken: string, newUser: User) => {
@@ -71,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 logout,
                 isAuthenticated: !!token,
                 isAdmin: user?.is_admin || false,
+                loading,
             }}
         >
             {children}

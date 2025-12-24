@@ -10,7 +10,15 @@ import './App.css';
 const queryClient = new QueryClient();
 
 function AppRoutes() {
-    const { isAuthenticated, isAdmin } = useAuth();
+    const { loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <div className="loader"></div>
+            </div>
+        );
+    }
 
     return (
         <Routes>
@@ -26,7 +34,9 @@ function AppRoutes() {
             <Route
                 path="/admin"
                 element={
-                    isAuthenticated && isAdmin ? <AdminPanel /> : <Login defaultMode="admin" />
+                    <PrivateRoute adminOnly>
+                        <AdminPanel />
+                    </PrivateRoute>
                 }
             />
             <Route path="/index.html" element={<Navigate to="/" replace />} />

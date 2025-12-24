@@ -8,7 +8,16 @@ interface PrivateRouteProps {
 }
 
 export default function PrivateRoute({ children, adminOnly = false }: PrivateRouteProps) {
-    const { isAuthenticated, isAdmin } = useAuth();
+    const { isAuthenticated, isAdmin, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <div className="loader"></div>
+                <p>Verifying session...</p>
+            </div>
+        );
+    }
 
     if (!isAuthenticated) {
         return <Navigate to={`/login${adminOnly ? '?mode=admin' : ''}`} replace />;
