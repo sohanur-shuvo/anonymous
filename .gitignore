@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.venv/
+backend/venv/
+
+# Environment variables
+.env
+
+# Local Database
+database/
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
