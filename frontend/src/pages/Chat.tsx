@@ -110,7 +110,12 @@ export default function Chat() {
                                                 {message.content}
                                             </div>
                                             <div className="message-time">
-                                                {message.display_time || new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                {new Date(message.timestamp).toLocaleTimeString('en-US', {
+                                                    timeZone: 'Asia/Dhaka',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: true
+                                                })}
                                             </div>
                                         </div>
                                     </motion.div>

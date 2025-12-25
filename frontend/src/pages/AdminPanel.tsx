@@ -230,7 +230,14 @@ export default function AdminPanel() {
                                             <div className="admin-message-text">
                                                 <strong>{message.user_id === 'Admin' ? 'You (Admin)' : message.user_name || 'Anonymous'}:</strong> {message.content}
                                             </div>
-                                            <div className="admin-message-time">{message.display_time || message.timestamp}</div>
+                                            <div className="admin-message-time">
+                                                {new Date(message.timestamp).toLocaleTimeString('en-US', {
+                                                    timeZone: 'Asia/Dhaka',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: true
+                                                })}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
