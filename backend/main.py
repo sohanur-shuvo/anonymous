@@ -498,6 +498,43 @@ async def clear_messages(username: str = Depends(verify_token)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.delete("/api/admin/messages/{target_username}")
+async def delete_user_messages(target_username: str, username: str = Depends(verify_token)):
+    if not db: raise HTTPException(status_code=503, detail="DB Error")
+    
+    print(f"🗑️ Request to delete messages for user: {target_username}")
+    
+    try:
+        # Query messages where user_id matches target_username
+        messages_ref = db.collection('messages')
+        # Note: 'user_id' must match the field name in your Firestore documents
+        query = messages_ref.where(field_path='user_id', op_string='==', value=target_username).limit(500).stream()
+        
+        deleted_count = 0
+        batch = db.batch()
+        batch_count = 0
+        
+        for doc in query:
+            batch.delete(doc.reference)
+            deleted_count += 1
+            batch_count += 1
+            
+            if batch_count >= 400: # Commit in chunks
+                batch.commit()
+                batch = db.batch()
+                batch_count = 0
+                
+        if batch_count > 0:
+            batch.commit()
+            
+        print(f"✅ Deleted {deleted_count} messages for {target_username}")
+            
+        await manager.broadcast({"type": "messages_cleared"}) # Trigger refresh on clients
+        return {"success": True, "deleted_count": deleted_count}
+    except Exception as e:
+        print(f"❌ Error deleting user messages: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/stats")
 async def get_stats(username: str = Depends(verify_token)):
     if not db: return {"total_users": 0, "total_messages": 0, "active_connections": 0}

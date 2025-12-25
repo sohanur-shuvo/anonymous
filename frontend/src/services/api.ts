@@ -65,6 +65,10 @@ export const adminAPI = {
         const response = await api.put(`/api/admin/users/${username}`, { status });
         return response.data;
     },
+    deleteUserMessages: async (username: string) => {
+        const response = await api.delete(`/api/admin/messages/${username}`);
+        return response.data;
+    },
     deleteUser: async (username: string) => {
         const response = await api.delete(`/api/admin/users/${username}`);
         return response.data;

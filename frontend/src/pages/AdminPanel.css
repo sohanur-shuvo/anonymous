@@ -132,6 +132,11 @@
     color: white;
 }
 
+.btn-cleanup {
+    background: #e53e3e;
+    color: white;
+}
+
 .btn-clear {
     background: var(--danger-color);
     color: white;

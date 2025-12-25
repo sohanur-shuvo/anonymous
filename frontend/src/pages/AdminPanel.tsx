@@ -47,6 +47,19 @@ export default function AdminPanel() {
         },
     });
 
+    const deleteUserMessagesMutation = useMutation({
+        mutationFn: (username: string) => adminAPI.deleteUserMessages(username),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['messages'] });
+            queryClient.invalidateQueries({ queryKey: ['stats'] });
+            alert(`Successfully deleted ${data.deleted_count || 'all'} messages for user.`);
+        },
+        onError: (error) => {
+            console.error(error);
+            alert('Failed to delete messages. Make sure the backend is running and up to date.');
+        }
+    });
+
     const clearMessagesMutation = useMutation({
         mutationFn: adminAPI.clearMessages,
         onSuccess: () => {
@@ -180,8 +193,20 @@ export default function AdminPanel() {
                                                     }
                                                 }}
                                                 className="btn-delete"
+                                                title="Delete User Account"
                                             >
-                                                Delete
+                                                🗑️
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm(`Delete ALL messages from ${username}? This cannot be undone.`)) {
+                                                        deleteUserMessagesMutation.mutate(username);
+                                                    }
+                                                }}
+                                                className="btn-cleanup"
+                                                title="Delete All Messages from User"
+                                            >
+                                                🧹
                                             </button>
                                         </div>
                                     </div>
@@ -276,6 +301,20 @@ export default function AdminPanel() {
                                 <h3>Total Messages</h3>
                                 <p className="stat-value">{stats?.total_messages || 0}</p>
                             </div>
+                        </div>
+
+                        <div className="danger-zone">
+                            <h3>Danger Zone</h3>
+                            <button
+                                onClick={() => {
+                                    if (confirm('⚠️ ARE YOU SURE? This will delete ALL messages from the database. This action cannot be undone.')) {
+                                        clearMessagesMutation.mutate();
+                                    }
+                                }}
+                                className="btn-clear-all"
+                            >
+                                ☢️ Delete All Messages
+                            </button>
                         </div>
                     </div>
                 )}
