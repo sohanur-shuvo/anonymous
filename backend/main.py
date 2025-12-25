@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import os
 import hashlib
@@ -390,8 +390,8 @@ async def send_message(message: Message, username: str = Depends(verify_token)):
     new_message = {
         "role": "user",
         "content": message.content,
-        "timestamp": datetime.now().isoformat(), # Use ISO format for robust sorting
-        "display_time": datetime.now().strftime("%H:%M:%S"), # For UI display
+        "timestamp": datetime.now(timezone.utc).isoformat(), # Use UTC aware timestamp
+        "display_time": datetime.now(timezone.utc).strftime("%H:%M:%S"), # Fallback
         "message_id": str(uuid4()),
         "user_id": username,
         "user_name": user_data.get("name", "Anonymous") if user_data else "Administrator"
