@@ -4,54 +4,78 @@
     height: 100vh;
     max-width: 1400px;
     margin: 0 auto;
+    background: radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.15), transparent 60%);
 }
 
+/* Glass Header */
 .chat-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    padding: 1.5rem 2rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header-content h1 {
-    font-size: 2rem;
-    margin-bottom: 0.25rem;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    margin: 0;
 }
 
 .subtitle {
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
 }
 
 .header-actions {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: center;
 }
 
 .user-info {
     font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: none;
+    /* Hide on mobile initially */
 }
 
-.admin-link {
+/* Responsive Buttons */
+.action-btn {
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text-color);
+    font-size: 0.875rem;
     font-weight: 500;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
 }
 
 .logout-btn {
-    padding: 0.5rem 1.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border-radius: 0.5rem;
-    font-weight: 500;
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
 }
 
 .logout-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(239, 68, 68, 0.2);
 }
 
 .chat-content {
@@ -59,49 +83,54 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 1rem;
+    position: relative;
 }
 
+/* Scroll area */
 .messages-container {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
-    background: var(--card-bg);
-    border-radius: 1rem;
-    margin-bottom: 1rem;
+    overflow-x: hidden;
+    padding: 1.5rem;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column-reverse;
+    /* Important for chat bottom-up feeling */
+}
+
+/* Inner wrapper to handle flex direction column-reverse correctly with sticky headers etc if needed, 
+   but for now we just want messages to stack from bottom or use normal stacking with auto scroll */
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+    gap: 1rem;
+    padding-bottom: 5rem;
+    /* Space for input area */
 }
 
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
     color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .empty-state h2 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
 }
 
-.messages-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
+/* Message Bubbles */
 .message {
     display: flex;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    width: 100%;
+    margin-bottom: 0.5rem;
 }
 
 .message-left {
@@ -113,71 +142,169 @@
 }
 
 .message-content {
-    max-width: 70%;
-    padding: 1rem;
-    border-radius: 1rem;
-    background: linear-gradient(135deg, #334155 0%, #475569 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    max-width: 85%;
+    padding: 0.75rem 1rem;
+    border-radius: 1.25rem;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+.message-left .message-content {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom-left-radius: 0.25rem;
 }
 
 .message-right .message-content {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    color: white;
+    border-bottom-right-radius: 0.25rem;
 }
 
 .message-text {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     line-height: 1.5;
+    word-break: break-word;
+    /* Prevent overflow */
+}
+
+.message-text strong {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    display: block;
+    margin-bottom: 0.25rem;
 }
 
 .message-time {
-    font-size: 0.75rem;
-    opacity: 0.7;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.admin-tag {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+    font-size: 0.7rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+/* Floating Input Bar */
+.input-area-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to top, var(--bg-color) 0%, rgba(15, 23, 42, 0) 100%);
+    pointer-events: none;
+    /* Let clicks pass through gradient area */
 }
 
 .message-input-form {
     display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--card-bg);
-    border-radius: 1rem;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+    /* Re-enable clicks */
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .message-input {
     flex: 1;
-    padding: 1rem;
-    background: var(--bg-color);
-    border: 2px solid var(--border-color);
-    border-radius: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
+    border-radius: 1.5rem;
     color: var(--text-color);
     font-size: 1rem;
+    transition: all 0.2s ease;
 }
 
 .message-input:focus {
     outline: none;
-    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .send-btn {
-    padding: 1rem 2rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.send-btn:hover {
+    transform: scale(1.05);
 }
 
 .send-btn:disabled {
     opacity: 0.5;
-    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    cursor: default;
 }
 
-.chat-info {
-    padding: 1rem;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+/* Mobile Responsiveness */
+@media (min-width: 768px) {
+    .message-content {
+        max-width: 65%;
+    }
+
+    .user-info {
+        display: block;
+    }
+
+    .input-area-wrapper {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .header-content h1 {
+        font-size: 1.25rem;
+    }
+
+    .subtitle {
+        display: none;
+    }
+
+    .messages-container {
+        padding: 1rem;
+    }
+
+    .message-content {
+        padding: 0.6rem 0.9rem;
+        border-radius: 1rem;
+    }
+
+    .input-area-wrapper {
+        padding: 0.75rem;
+    }
+
+    .message-input {
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
 }
